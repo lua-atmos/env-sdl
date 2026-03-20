@@ -33,5 +33,5 @@ Assumes this directory structure:
 ```
 
 ```bash
-LUA_PATH="../f-streams/?/init.lua;../atmos/?.lua;../atmos/?/init.lua;;" lua5.4 exs/cross.lua
+LUA_PATH="../../f-streams/?/init.lua;../atmos/?.lua;../atmos/?/init.lua;;" lua5.4 exs/across.lua
 ```

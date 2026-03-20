@@ -4,18 +4,18 @@ local sdl = require "atmos.env.sdl"
 local SDL = require "SDL"
 local TTF = require "SDL.ttf"
 
-local point_vs_rect = sdl.point_vs_rect
-
-_,REN = sdl.window {
-	title  = "Lua-Atmos-SDL: Click, Drag, Cancel",
-	width  = 256,
-	height = 256,
-    flags  = { SDL.flags.OpenGL },
-}
-
-FNT = assert(TTF.open("DejaVuSans.ttf", 20))
-
 loop(function ()
+    local point_vs_rect = sdl.point_vs_rect
+
+    _,REN = sdl.window {
+        title  = "Lua-Atmos-SDL: Click, Drag, Cancel",
+        width  = 256,
+        height = 256,
+        flags  = { SDL.flags.OpenGL },
+    }
+
+    FNT = assert(TTF.open("DejaVuSans.ttf", 20))
+
     local text = " "
     local rect = {x=256/2-20,y=256/2-20, w=40,h=40}
     spawn(function ()

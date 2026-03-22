@@ -1,6 +1,16 @@
-# atmos.env.sdl
+# atmos-env-sdl
 
-A [lua-atmos](../../../) environment for [SDL][1] based on [lua-sdl2][2].
+An [Atmos][atmos] environment for [SDL][sdl] based on [lua-sdl2][lua-sdl2].
+
+[atmos]:    https://github.com/lua-atmos/atmos/
+[sdl]:      https://www.libsdl.org/
+[lua-sdl2]: https://github.com/Tangent128/luasdl2/
+
+# Install
+
+```
+sudo luarocks --lua-version=5.4 install atmos-env-sdl
+```
 
 # Run
 
@@ -8,7 +18,9 @@ A [lua-atmos](../../../) environment for [SDL][1] based on [lua-sdl2][2].
 lua5.4 <lua-path>/atmos/env/sdl/exs/click-drag-cancel.lua
 ```
 
-Requires font [DejaVuSans.ttf][3] in the current directory.
+Requires font [DejaVuSans.ttf][deja] in the current directory.
+
+[deja]: https://github.com/lua-atmos/env-sdl/blob/main/DejaVuSans.ttf
 
 # Events
 
@@ -16,10 +28,6 @@ Requires font [DejaVuSans.ttf][3] in the current directory.
 - `'sdl.step (ms)'`
 - `'sdl.draw'`
 - `SDL.event.*`
-
-[1]: https://www.libsdl.org/
-[2]: https://github.com/Tangent128/luasdl2/
-[3]: https://github.com/lua-atmos/atmos/blob/v0.1/atmos/env/sdl/exs/DejaVuSans.ttf
 
 # Source
 

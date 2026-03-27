@@ -14,12 +14,17 @@ local M = {
     mode = { primary=true, secondary=true },
 }
 
-function M.open ()
-    assert(SDL.init())
-    assert(IMG.init())
-    assert(TTF.init())
-    assert(MIX.init())
-    MIX.openAudio(44100, SDL.audioFormat.S16, 2, 1024)
+assert(SDL.init())
+assert(IMG.init())
+assert(TTF.init())
+assert(MIX.init())
+MIX.openAudio(44100, SDL.audioFormat.S16, 2, 1024)
+
+function M.quit ()
+    MIX.quit()
+    TTF.quit()
+    IMG.quit()
+    SDL.quit()
 end
 
 local MS = M.mpf
@@ -138,13 +143,6 @@ function M.step ()
     if M.ren then
         M.ren:present()
     end
-end
-
-function M.close ()
-    MIX.quit()
-    TTF.quit()
-    IMG.quit()
-    SDL.quit()
 end
 
 atmos.env(M)

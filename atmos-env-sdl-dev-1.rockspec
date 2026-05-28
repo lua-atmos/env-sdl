@@ -1,5 +1,5 @@
 package = "atmos-env-sdl"
-version = "dev-2"
+version = "dev-1"
 source = {
    url = "git+https://github.com/lua-atmos/env-sdl",
    branch = "main",

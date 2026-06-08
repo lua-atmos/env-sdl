@@ -29,26 +29,6 @@ end
 
 local MS = M.mpf
 
-local meta = {
-    __atmos = function (awt, e)
-        local t1, e1, v1 = table.unpack(awt)
-        -- awt = { '==', <type>, <filter>... } : index 1 is the run.lua marker
-        if t1 ~= '==' then
-            return nil  -- standard emit/await check
-        elseif e.type ~= e1 then
-            return false
-        elseif (e.type==SDL.event.KeyDown or e.type==SDL.event.KeyUp) and type(v1)=='string' then
-            return (v1 == e.name), e, e
-        elseif (e.type==SDL.event.MouseButtonDown or e.type==SDL.event.MouseButtonUp) and type(v1)=='string' then
-            return (v1 == e.but), e, e
-        elseif type(v1) == 'function' then
-            return v1(e), e
-        else
-            return true, e, e
-        end
-    end
-}
-
 function M.window (w)
     M.win = assert(SDL.createWindow(w))
     M.ren = assert(SDL.createRenderer(M.win,-1))
@@ -119,13 +99,13 @@ function M.step ()
         if M.mpf == 0 then
             local dt = (cur - M.now)
             M.now = cur
-            emit('clock', dt, M.now)
+            emit(dt * 1000)
         else
             MS = MS - (cur-old)
             if MS <= 0 then
                 MS = M.mpf + MS
                 M.now = cur
-                emit('clock', M.mpf, M.now)
+                emit(M.mpf * 1000)
             end
         end
     end
@@ -134,7 +114,8 @@ function M.step ()
         if (e.type==SDL.event.KeyDown or e.type==SDL.event.KeyUp) then
             e.name = SDL.getKeyName(e.keysym.sym)
         end
-        emit(setmetatable(e, meta))
+        e.tag = 'sdl'
+        emit(e)
         if e.type == SDL.event.Quit then
             return true
         end

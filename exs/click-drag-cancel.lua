@@ -29,29 +29,30 @@ loop(function ()
         end)
     end)
     while true do
-        local click = await(SDL.event.MouseButtonDown, function (e)
-            return point_vs_rect(e, rect), e
-        end)
+        local click = await { tag='until',
+            { tag='sdl', type=SDL.event.MouseButtonDown },
+            function (e) return point_vs_rect(e, rect) end,
+        }
         local orig = x.copy(rect)
         text = "... clicking ..."
         par_or(function ()
-            await(SDL.event.KeyDown, 'Escape')
+            await { tag='sdl', type=SDL.event.KeyDown, name='Escape' }
             rect = orig
             text = "!!! CANCELLED !!!"
         end, function ()
             par_or(function ()
-                await(SDL.event.MouseMotion)
+                await { tag='sdl', type=SDL.event.MouseMotion }
                 text = "... dragging ..."
-                await(SDL.event.MouseButtonUp)
+                await { tag='sdl', type=SDL.event.MouseButtonUp }
                 text = "!!! DRAGGED !!!"
             end, function ()
-                every(SDL.event.MouseMotion, function (e)
+                every({ tag='sdl', type=SDL.event.MouseMotion }, function (e)
                     rect.x = orig.x + (e.x - click.x)
                     rect.y = orig.y + (e.y - click.y)
                 end)
             end)
         end, function ()
-            await(SDL.event.MouseButtonUp)
+            await { tag='sdl', type=SDL.event.MouseButtonUp }
             text = "!!! CLICKED !!!"
         end)
     end

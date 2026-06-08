@@ -31,32 +31,38 @@ This plan uses release branches (not tags) for versioning.
 | clock fast (L113) | `emit('clock', dt, M.now)` | `emit(dt * 1000)` (SDL ticks ms -> us); keep `M.now = cur` |
 | clock mpf (L119) | `emit('clock', M.mpf, M.now)` | `emit(M.mpf * 1000)` |
 
-- [ ] Move `open` body to module top-level
-- [ ] Rename `close` -> `quit`
-- [ ] Clock emits single-arg microseconds
+- [x] Move `open` body to module top-level
+- [x] Rename `close` -> `quit`
+- [x] Clock emits single-arg microseconds (`emit(dt*1000)`)
 - [ ] Verify `atmos.env(M)` still registers (`step`/`quit`/`mode`)
 
-#### 1.1 INVESTIGATE: custom event matching (`__atmos`)
+#### 1.1 DECISION: drop `__atmos`, use built-in table matching
 
-v0.7 `await` is single-arg, but examples await with two args
-(type + predicate), and the env's matcher reads `awt[1]`/`awt[2]`.
+v0.7 `await` is single-arg. Instead of a custom `__atmos`
+matcher, rely on core combinators (run.lua):
 
-Findings:
-- Core calls `__atmos` on BOTH sides:
-    - pattern metatable: `__atmos(awt, emt)` (run.lua:557)
-    - event metatable:   `__atmos(emt, awt)` (run.lua:599)
-- env currently attaches `meta` to the EMITTED event
-  (`emit(setmetatable(e, meta))`), so core calls
-  `__atmos(event, pattern)`.
-- But the env fn `function (awt, e)` is written as if it gets
-  `(pattern, event)` -> mismatch under v0.7.
+- Table match (L612-625): `await{ tag, k=v, ... }` accepts an
+  event table where every pattern field satisfies `M.is`.
+- `until`/`while` (L514-538): `await{ tag='until', <pat>,
+  <pred>... }` re-awaits `<pat>` until all predicates hold
+  (returns event); `while` until any fails.
 
-Decide and implement:
-- [ ] Make await patterns single-arg tables carrying
-      `[1]=type`, `[2]=name|predicate`
-- [ ] Put `__atmos` on the PATTERN (so `__atmos(pat, evt)`
-      fires via run.lua:557), or fix the event-side arg order
-- [ ] Provide a helper/ctor so examples build patterns cleanly
+Env change: emit events as plain tables with a `tag` field
+(no metatable, no `meta`/`__atmos`):
+- `M.step` (L137): `e.tag='sdl'; emit(e)` (drop
+  `setmetatable(e, meta)`)
+- delete `meta`/`__atmos` block (L32-50)
+
+Await forms (used by examples):
+
+| filter | v0.7 form |
+|--------|-----------|
+| type only | `await{ tag='sdl', type=MouseMotion }` |
+| field eq | `await{ tag='sdl', type=KeyDown, name='Escape' }` |
+| predicate | `await{ tag='until', {tag='sdl', type=...}, pred }` |
+
+- [x] `M.step`: `e.tag='sdl'; emit(e)`
+- [x] Delete `meta`/`__atmos` (L32-50)
 
 ### 2. Migrate examples (`exs/`)
 
@@ -64,11 +70,11 @@ Decide and implement:
 |------|--------|
 | `exs/hello.lua` | `clock{s=5}` -> `5*_s_`; `clock{ms=500}` -> `500*_ms_` |
 | `exs/across.lua` | raw SDL loop + `SDL.delay`; verify, likely no change |
-| `exs/click-drag-cancel.lua` | single-arg awaits per 1.1: `await(MouseButtonDown, pred)`, `await(KeyDown, 'Escape')`, `await(MouseMotion)`, etc.; `every('sdl.draw', ...)` stays (string tag ok) |
+| `exs/click-drag-cancel.lua` | table patterns per 1.1: click -> `await{tag='until', {tag='sdl', type=MouseButtonDown}, pred}`; `await{tag='sdl', type=KeyDown, name='Escape'}`; `await{tag='sdl', type=MouseMotion}`; `every('sdl.draw', ...)` stays (string tag ok) |
 
-- [ ] `exs/hello.lua`
-- [ ] `exs/across.lua`
-- [ ] `exs/click-drag-cancel.lua`
+- [x] `exs/hello.lua`
+- [x] `exs/across.lua` (no change: raw SDL loop)
+- [x] `exs/click-drag-cancel.lua`
 
 ### 3. README.md
 

@@ -14,26 +14,35 @@ local M = {
     mode = { primary=true, secondary=true },
 }
 
-function M.open ()
-    assert(SDL.init())
-    assert(IMG.init())
-    assert(TTF.init())
-    assert(MIX.init())
-    MIX.openAudio(44100, SDL.audioFormat.S16, 2, 1024)
+assert(SDL.init())
+assert(IMG.init())
+assert(TTF.init())
+assert(MIX.init())
+MIX.openAudio(44100, SDL.audioFormat.S16, 2, 1024)
+
+function M.quit ()
+    MIX.quit()
+    TTF.quit()
+    IMG.quit()
+    SDL.quit()
 end
 
 local MS = M.mpf
 
 local meta = {
     __atmos = function (awt, e)
-        if e.type ~= awt[1] then
+        local t1, e1, v1 = table.unpack(awt)
+        -- awt = { '==', <type>, <filter>... } : index 1 is the run.lua marker
+        if t1 ~= '==' then
+            return nil  -- standard emit/await check
+        elseif e.type ~= e1 then
             return false
-        elseif (e.type==SDL.event.KeyDown or e.type==SDL.event.KeyUp) and type(awt[2])=='string' then
-            return (awt[2] == e.name), e, e
-        elseif (e.type==SDL.event.MouseButtonDown or e.type==SDL.event.MouseButtonUp) and type(awt[2])=='string' then
-            return (awt[2] == e.but), e, e
-        elseif type(awt[2]) == 'function' then
-            return awt[2](e), e
+        elseif (e.type==SDL.event.KeyDown or e.type==SDL.event.KeyUp) and type(v1)=='string' then
+            return (v1 == e.name), e, e
+        elseif (e.type==SDL.event.MouseButtonDown or e.type==SDL.event.MouseButtonUp) and type(v1)=='string' then
+            return (v1 == e.but), e, e
+        elseif type(v1) == 'function' then
+            return v1(e), e
         else
             return true, e, e
         end
@@ -138,13 +147,6 @@ function M.step ()
     if M.ren then
         M.ren:present()
     end
-end
-
-function M.close ()
-    MIX.quit()
-    TTF.quit()
-    IMG.quit()
-    SDL.quit()
 end
 
 atmos.env(M)

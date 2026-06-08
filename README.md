@@ -24,10 +24,11 @@ Requires font [DejaVuSans.ttf][deja] in the current directory.
 
 # Events
 
-- `clock`
-- `'sdl.step (ms)'`
+- clock
 - `'sdl.draw'`
-- `SDL.event.*`
+- SDL events: table patterns tagged `'sdl'`
+    - `await{ tag='sdl', type=SDL.event.KeyDown, name='Escape' }`
+    - filter: `await{ tag='until', {tag='sdl', type=...}, pred }`
 
 # Source
 

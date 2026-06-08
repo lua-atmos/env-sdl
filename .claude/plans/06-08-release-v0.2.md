@@ -1,5 +1,25 @@
 # Plan: Release env-sdl v0.2 (atmos v0.7)
 
+## RESUME HERE (state @ 2026-06-08)
+
+Done (uncommitted, on branch `v0.2`): §1 `init.lua`,
+§2 examples, §3 README, §4 `0.2-1.rockspec`. §5 local tests
+pass.
+
+IMPORTANT: all edits are LOCAL + UNCOMMITTED. To continue on
+another machine, first commit & push (§7) from THIS machine,
+then `git pull` there. Otherwise the work does not travel.
+
+Files changed:
+- `init.lua` (table matching, single-arg us clock, no
+  `__atmos`)
+- `exs/hello.lua`, `exs/click-drag-cancel.lua`
+- `README.md` (Events section)
+- new `atmos-env-sdl-0.2-1.rockspec`
+
+Remaining, in order: §7 commit/push -> §6 Phase-2 test ->
+§8 dependent apps.
+
 ## Context
 
 `env-sdl` v0.1 targets atmos v0.6. atmos v0.7 introduces breaking
@@ -78,9 +98,10 @@ Await forms (used by examples):
 
 ### 3. README.md
 
-- [ ] atmos version `v0.6` -> `v0.7`
-- [ ] env version `v0.1` -> `v0.2`
-- [ ] Update any inline example syntax (clock/await/emit)
+- [x] Events section rewritten for v0.7 (clock us, table
+      patterns, drop stale `'sdl.step (ms)'`)
+- n/a no literal `v0.6`/`v0.1` strings in README (version
+      lives in rockspec)
 
 ### 4. Rockspec
 
@@ -92,14 +113,17 @@ New `atmos-env-sdl-0.2-1.rockspec` from `0.1-1`:
 | `source.branch` | `v0.1` | `v0.2` |
 | `dependencies` atmos | `atmos >= 0.6` | `atmos ~> 0.7` |
 
-- [ ] Create rockspec
-- [ ] Keep `lua-sdl2` dep; verify module list
+- [x] Create rockspec (`atmos-env-sdl-0.2-1.rockspec`)
+- [x] Keep `lua-sdl2` dep; module list unchanged
 
 ### 5. Phase 1 tests (local, `LUA_PATH` trick)
 
-- [ ] `exs/hello.lua`
-- [ ] `exs/across.lua`
-- [ ] `exs/click-drag-cancel.lua`
+Done via `sudo luarocks make atmos-env-sdl-dev-1.rockspec`
+(installs working copy over stale rock). All pass.
+
+- [x] `exs/hello.lua`
+- [x] `exs/across.lua`
+- [x] `exs/click-drag-cancel.lua`
 
 ### 6. Phase 2 tests (global, `luarocks make`)
 
@@ -115,8 +139,25 @@ New `atmos-env-sdl-0.2-1.rockspec` from `0.1-1`:
 
 ### 8. Dependent apps (separate repos)
 
-Each needs the same await/clock migration + version bumps:
+Apply the SAME transformations as §1.1/§2 to each app's
+source (these are OUTSIDE this worktree — edit on their repos):
 
-- [ ] `sdl-birds` (`birds-11.lua`)
-- [ ] `sdl-rocks` (`main.lua`)
-- [ ] `sdl-pingus` (`main.lua`)
+Transformation rules (per file):
+1. clock: `clock{s=N}` -> `N*_s_`; `clock{ms=N}` -> `N*_ms_`
+   (constants `_us_ _ms_ _s_ _min_ _h_ _day_`)
+2. type-only await: `await(SDL.event.X)` ->
+   `await{ tag='sdl', type=SDL.event.X }`
+3. field await: `await(SDL.event.KeyDown, 'Esc')` ->
+   `await{ tag='sdl', type=SDL.event.KeyDown, name='Esc' }`
+   (button -> `but='...'`)
+4. predicate await: `await(SDL.event.X, pred)` ->
+   `await{ tag='until', {tag='sdl', type=SDL.event.X}, pred }`
+5. `every(SDL.event.X, handler)` ->
+   `every({tag='sdl', type=SDL.event.X}, handler)`
+6. their rockspec dep: bump to `atmos-env-sdl ~> 0.2` and
+   `atmos ~> 0.7`
+
+Apps:
+- [ ] `sdl-birds` (`birds-11.lua` + rockspec)
+- [ ] `sdl-rocks` (`main.lua` + rockspec)
+- [ ] `sdl-pingus` (`main.lua` + rockspec)

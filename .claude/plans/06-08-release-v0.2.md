@@ -17,8 +17,8 @@ Files changed:
 - `README.md` (Events section)
 - new `atmos-env-sdl-0.2-1.rockspec`
 
-Remaining, in order: §7 commit/push -> §6 Phase-2 test ->
-§8 dependent apps.
+§1-§7 DONE (committed, pushed, Phase-2 tested).
+Remaining: §8 dependent apps only.
 
 ## Context
 
@@ -127,15 +127,15 @@ Done via `sudo luarocks make atmos-env-sdl-dev-1.rockspec`
 
 ### 6. Phase 2 tests (global, `luarocks make`)
 
-- [ ] `luarocks make atmos-env-sdl-0.2-1.rockspec`
-- [ ] `exs/hello.lua`
-- [ ] `exs/across.lua`
-- [ ] `exs/click-drag-cancel.lua`
+- [x] `luarocks make atmos-env-sdl-0.2-1.rockspec`
+- [x] `exs/hello.lua`
+- [x] `exs/across.lua`
+- [x] `exs/click-drag-cancel.lua`
 
 ### 7. Commit, push, branch
 
-- [ ] Commit, push main
-- [ ] Create/update branch `v0.2`, push
+- [x] Commit, push
+- [x] Branch `v0.2` pushed
 
 ### 8. Dependent apps (separate repos)
 
@@ -143,8 +143,14 @@ Apply the SAME transformations as §1.1/§2 to each app's
 source (these are OUTSIDE this worktree — edit on their repos):
 
 Transformation rules (per file):
-1. clock: `clock{s=N}` -> `N*_s_`; `clock{ms=N}` -> `N*_ms_`
+1. clock timers: `clock{s=N}` -> `N*_s_`;
+   `clock{ms=N}` -> `N*_ms_`
    (constants `_us_ _ms_ _s_ _min_ _h_ _day_`)
+1b. clock DELTA (frame physics): `'clock'` is now a core
+   primitive (atmos run.lua:607) that wakes on any bare-number
+   emit and returns the delta in us. Rescale us->ms:
+       every('clock', function (_,ms) BODY end)   -- v0.6 (ms)
+       every('clock', function (us) local ms=us/1000; BODY end)  -- v0.7 (us)
 2. type-only await: `await(SDL.event.X)` ->
    `await{ tag='sdl', type=SDL.event.X }`
 3. field await: `await(SDL.event.KeyDown, 'Esc')` ->
@@ -154,10 +160,15 @@ Transformation rules (per file):
    `await{ tag='until', {tag='sdl', type=SDL.event.X}, pred }`
 5. `every(SDL.event.X, handler)` ->
    `every({tag='sdl', type=SDL.event.X}, handler)`
-6. their rockspec dep: bump to `atmos-env-sdl ~> 0.2` and
+6. toggle: `emit` is single-arg in v0.7. Drive `toggle(E,..)`
+   with table emits, not 2-arg:
+       emit('Show', false) -> emit{tag='Show', false}
+       emit('Show', true)  -> emit{tag='Show', true}
+7. their rockspec dep: bump to `atmos-env-sdl ~> 0.2` and
    `atmos ~> 0.7`
 
 Apps:
-- [ ] `sdl-birds` (`birds-11.lua` + rockspec)
+- [x] `sdl-birds` (`birds-11.lua`) — code migrated (rockspec
+      bump still pending)
 - [ ] `sdl-rocks` (`main.lua` + rockspec)
 - [ ] `sdl-pingus` (`main.lua` + rockspec)

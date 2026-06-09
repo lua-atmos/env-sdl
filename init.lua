@@ -53,11 +53,6 @@ function M.rect_vs_rect (r1, r2)
     return SDL.hasIntersection(M.ints(r1), M.ints(r2))
 end
 
-function M.evt_vs_key (e, key)
-    assert(e.type == SDL.event.KeyDown)
-    return key == SDL.getKeyName(e.keysym.sym)
-end
-
 function M.pct_to_pos (x, y, r)
     local w,h = M.win:getSize()
     r = r or { x=w/2, y=h/2, w=w, h=h }

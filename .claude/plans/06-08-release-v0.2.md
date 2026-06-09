@@ -1,24 +1,34 @@
 # Plan: Release env-sdl v0.2 (atmos v0.7)
 
-## RESUME HERE (state @ 2026-06-08)
+## STATUS (@ 2026-06-09): COMPLETE — only luarocks upload left
 
-Done (uncommitted, on branch `v0.2`): §1 `init.lua`,
-§2 examples, §3 README, §4 `0.2-1.rockspec`. §5 local tests
-pass.
+Migration v0.6->v0.7 / v0.1->v0.2 done across all repos.
+All code committed, pushed, tested; every `main`/`master`
+fast-forwarded to its release branch and synced to origin.
 
-IMPORTANT: all edits are LOCAL + UNCOMMITTED. To continue on
-another machine, first commit & push (§7) from THIS machine,
-then `git pull` there. Otherwise the work does not travel.
+| repo       | release | main==vX | tested |
+|------------|---------|----------|--------|
+| atmos      | v0.7    | ✅       | ✅     |
+| env-sdl    | v0.2    | ✅       | ✅     |
+| sdl-birds  | v0.5    | ✅ (11 exs) | ✅  |
+| sdl-pingus | v0.5    | ✅       | ✅     |
+| sdl-rocks  | v0.5*   | ✅ (*master) | ✅ |
 
-Files changed:
-- `init.lua` (table matching, single-arg us clock, no
-  `__atmos`)
-- `exs/hello.lua`, `exs/click-drag-cancel.lua`
-- `README.md` (Events section)
-- new `atmos-env-sdl-0.2-1.rockspec`
+atmos also gained the `'clock'` await primitive + `_us_.._day_`
+constants (run.lua / init.lua), installed locally.
 
-§1-§7 DONE (committed, pushed, Phase-2 tested).
-Remaining: §8 dependent apps only.
+### ONLY REMAINING: publish rockspecs to luarocks.org
+- [ ] `atmos-env-sdl-0.2-1.rockspec` -> `luarocks upload`
+- [ ] atmos: rev-bump to `0.7-2` if `0.7-1` already published,
+      then `luarocks upload` (source.branch=v0.7 is pushed)
+
+### Key v0.7 migration findings (see §8 rules)
+- clock: bare-number us; timers `N*_s_`; delta via `'clock'`
+  primitive (`every('clock', fn(us))`, rescale us->ms)
+- events: table patterns `{tag='sdl', type=, name=}`;
+  predicate via `{tag='until', <pat>, pred}`; `__atmos` removed
+- emit single-arg: toggle driven by `emit{tag='Show', false}`
+- tasks-pool await needs `{tag='tasks', mode='any', tasks=}`
 
 ## Context
 
@@ -172,11 +182,13 @@ Transformation rules (per file):
 8. their rockspec dep: bump to `atmos-env-sdl ~> 0.2` and
    `atmos ~> 0.7`
 
-Apps:
-- [x] `sdl-birds` — all 11 variants (`birds-01..11.lua`)
-      migrated; birds-11 tested OK, 01-10 test pending
-- [x] `sdl-rocks` (`main.lua`, `battle.lua`, `ts.lua`) —
-      migrated, test pending
+Apps (all tested + pushed; main/master==v0.5; READMEs ->
+0.7/0.2/v0.5):
+- [x] `sdl-birds` — all 11 (`birds-01..11.lua`), v0.5;
+      also fixed branch mess (restored v0.3 -> 377f590,
+      v0.2/v0.4 untouched)
+- [x] `sdl-rocks` (`main.lua`, `battle.lua`, `ts.lua`), v0.5;
+      incl. tasks-pool restart fix (rule 7)
 - [x] `sdl-pingus` (`main.lua`, `menu.lua`, `level.lua`,
-      `pingu.lua`) — migrated, test pending
-- [ ] rockspec bumps for all 3 apps
+      `pingu.lua`), v0.5
+- n/a apps have no rockspecs (tutorials, not packages)

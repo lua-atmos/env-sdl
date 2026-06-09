@@ -164,11 +164,19 @@ Transformation rules (per file):
    with table emits, not 2-arg:
        emit('Show', false) -> emit{tag='Show', false}
        emit('Show', true)  -> emit{tag='Show', true}
-7. their rockspec dep: bump to `atmos-env-sdl ~> 0.2` and
+7. tasks-pool await: bare `await(pool)`/`watching(pool,..)`
+   no longer fires in v0.7 (pool has no tag/mode). Use:
+       watching({tag='tasks', mode='any', tasks=pool}, body)
+   returns `(deadTask.ret, deadTask, pool)` -> grab 2nd value:
+       local _, dead = watching({tag='tasks',mode='any',...}, ..)
+8. their rockspec dep: bump to `atmos-env-sdl ~> 0.2` and
    `atmos ~> 0.7`
 
 Apps:
-- [x] `sdl-birds` (`birds-11.lua`) — code migrated (rockspec
-      bump still pending)
-- [ ] `sdl-rocks` (`main.lua` + rockspec)
-- [ ] `sdl-pingus` (`main.lua` + rockspec)
+- [x] `sdl-birds` — all 11 variants (`birds-01..11.lua`)
+      migrated; birds-11 tested OK, 01-10 test pending
+- [x] `sdl-rocks` (`main.lua`, `battle.lua`, `ts.lua`) —
+      migrated, test pending
+- [x] `sdl-pingus` (`main.lua`, `menu.lua`, `level.lua`,
+      `pingu.lua`) — migrated, test pending
+- [ ] rockspec bumps for all 3 apps

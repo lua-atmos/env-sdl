@@ -1,6 +1,12 @@
 # Plan: Re-release env-sdl v0.2 (atmos 0.7-2)
 
-## RESUME HERE (state @ 2026-06-18) -- NEXT = step 3 test local
+## RESUME HERE (state @ 2026-06-18) -- NEXT = step 6 commit/push v0.2
+
+DECISION (2026-06-18): SKIP the rock rev bump. Rockspec content is
+byte-identical to `0.2-1` (same branch `v0.2`, `atmos ~> 0.7`,
+module list). Rocks branch-track `v0.2`, so pushing the fix serves
+it under `0.2-1` automatically -> no `0.2-2`, no re-upload, no
+`dev-2`. Steps 4/5/7 dropped.
 
 PRIOR CUT (frozen, see bottom): env-sdl v0.2 / rock `0.2-1`
 was released for atmos 0.7-1. That work stands. Since then
@@ -28,11 +34,11 @@ replaces `dev-1`) is only to re-publish. Mirror atmos `0.7-2`.
 
 1. [x] Migrate the 4 sites above
 2. [x] Grep clean: no `every(` / `task()` / bare `spawn(function`
-3. [ ] Test local (LUA_PATH): hello, across, click-drag-cancel
-4. [ ] `0.2-2.rockspec` (copy 0.2-1, branch v0.2) + `dev-2`
-5. [ ] `luarocks make` + test global
+3. [x] Test local (LUA_PATH): hello, across, click-drag-cancel
+4. [~] SKIP rock bump (identical content; branch-tracked) -- DROPPED
+5. [~] SKIP global luarocks make / upload -- DROPPED
 6. [ ] Commit, push `v0.2`, ff `main`, sync
-7. [ ] `luarocks upload atmos-env-sdl-0.2-2.rockspec`
+7. [~] SKIP `luarocks upload` (no new rev) -- DROPPED
 8. [ ] Re-migrate + test downstream apps (see below)
 
 ## Downstream apps (no own plan -- handle here)

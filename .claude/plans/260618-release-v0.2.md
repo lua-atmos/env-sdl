@@ -1,3 +1,43 @@
+# Plan: Re-release env-sdl v0.2 (atmos 0.7-2)
+
+## RESUME HERE (state @ 2026-06-18) -- NEXT = §1 migrate
+
+PRIOR CUT (frozen, see bottom): env-sdl v0.2 / rock `0.2-1`
+was released for atmos 0.7-1. That work stands. Since then
+atmos v0.7 grew BREAKING changes (shipping as 0.7-2):
+`every`->`loop_on`, `task()` me-accessor -> `xtask()`,
+`spawn(fn)` -> `do_spawn`. This re-cuts env-sdl on the new core.
+
+Breaking sites (scan @ 2026-06-18):
+- `exs/hello.lua:6` `every(500*_ms_, ...)`
+- `exs/click-drag-cancel.lua:21` `spawn(function ...)`
+- `exs/click-drag-cancel.lua:22` `every('sdl.draw', ...)`
+- `exs/click-drag-cancel.lua:49` `every({tag='sdl', ...}, ...)`
+- no `task()` accessor
+
+Mechanical migration:
+- `every(`            -> `loop_on(`
+- `spawn(function...` -> `do_spawn(function...` (self-contained)
+                      else `spawn(task(function...))`
+
+Rocks branch-track `v0.2`, so pushing the fix to `v0.2` already
+serves it under `0.2-1`; a new rock rev `0.2-2` (+ `dev-2`,
+replaces `dev-1`) is only to re-publish. Mirror atmos `0.7-2`.
+
+## Steps (this re-cut)
+
+1. [ ] Migrate the 4 sites above
+2. [ ] Grep clean: no `every(` / `task()` / bare `spawn(function`
+3. [ ] Test local (LUA_PATH): hello, across, click-drag-cancel
+4. [ ] `0.2-2.rockspec` (copy 0.2-1, branch v0.2) + `dev-2`
+5. [ ] `luarocks make` + test global
+6. [ ] Commit, push `v0.2`, ff `main`, sync
+7. [ ] `luarocks upload atmos-env-sdl-0.2-2.rockspec`
+
+--------------------------------------------------------------
+
+## PRIOR CUT (frozen -- atmos 0.7-1 era, for reference)
+
 # Plan: Release env-sdl v0.2 (atmos v0.7)
 
 ## STATUS (@ 2026-06-09): COMPLETE — only luarocks upload left

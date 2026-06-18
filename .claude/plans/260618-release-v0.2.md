@@ -1,6 +1,37 @@
 # Plan: Re-release env-sdl v0.2 (atmos 0.7-2)
 
-## RESUME HERE (state @ 2026-06-18) -- NEXT = step 6 commit/push v0.2
+## RESUME HERE (state @ 2026-06-18) -- handoff to another machine
+
+DONE & PUSHED (nothing to carry):
+- env-sdl: migrated + tested + pushed. `v0.2`==`main`==origin
+  @ a31c8d1. Rock stays `0.2-1` (0.2-2 bump SKIPPED).
+- sdl-birds: migrated + tested + COMMITTED + PUSHED.
+  `v0.5`==`main`==origin @ edc8203 ("v0.5 : task, xtask, loop_on").
+
+>>> CRITICAL -- UNCOMMITTED, LOCAL TO THIS MACHINE ONLY <<<
+sdl-rocks & sdl-pingus are migrated + TESTED but their edits are
+WORKING-TREE ONLY (not committed). They will NOT be on another
+machine. Options: (a) commit+push HERE before switching, or
+(b) redo the migration there (rules below + RULE 9 + pitfalls).
+
+NEXT STEPS (explicit):
+1. [ ] sdl-rocks (on branch `v0.5`; modified: battle/main/ts.lua):
+       commit -> push v0.5 -> ff `master` -> push master.
+       Base origin @ 719f2e1. Use msg like sdl-birds:
+       "v0.5 : task, xtask, loop_on".
+2. [ ] sdl-pingus (on branch `v0.5`; modified: level/menu/pingu.lua):
+       commit -> push v0.5 -> ff `main` -> push main.
+       Base origin @ 1352516. Same commit msg.
+3. [ ] (optional) spot-rerun an example per repo after checkout
+       on the other machine to confirm (luac -p + run).
+4. [ ] Back in atmos plan (06-08-release-v0.7.md): mark sdl-rocks/
+       sdl-pingus DONE under §4 apps; then continue atmos §2 docs.
+
+If redoing on another machine, apply per file:
+`every (`/`every(` -> `loop_on`; `task()` -> `xtask()`;
+`spawn(function` -> `do_spawn(function`; NAMED protos: wrap the
+DEFINITION `Name = task(function..end)` (see RULE 9). Then
+`luac -p *.lua` and run an example.
 
 DECISION (2026-06-18): SKIP the rock rev bump. Rockspec content is
 byte-identical to `0.2-1` (same branch `v0.2`, `atmos ~> 0.7`,
@@ -22,9 +53,22 @@ Breaking sites (scan @ 2026-06-18):
 - no `task()` accessor
 
 Mechanical migration:
-- `every(`            -> `loop_on(`
+- `every(`            -> `loop_on(`  (ALSO spaced `every (`!)
 - `spawn(function...` -> `do_spawn(function...` (self-contained)
                       else `spawn(task(function...))`
+- `task()` accessor  -> `xtask()`
+
+NEW RULE 9 (found 2026-06-18 via runtime err in downstream):
+0.7-2 `spawn`/`spawn_in` require a TASK PROTOTYPE, not a bare
+function. Wrap the DEFINITION once (not each call site):
+- `function Bird(a)...end`  -> `local Bird = task(function(a)...end)`
+- global / module / `Tbl.Field` protos: keep scope, drop `local`
+  (`Bird = task(function...end)`), keep any `return Bird`.
+- `do_spawn(fn)` is unaffected (wraps internally).
+Spawn sites stay bare: `spawn(Bird,..)`, `spawn_in(pool,Bird,..)`.
+Blind-sed pitfall: `\bevery\(` / `\bspawn\(` MISS spaced calls
+`every (` / `spawn (`; use `\s*` before `\(`. Definition-wrap is
+multi-line (match the closing `end` -> `end)`); verify `luac -p`.
 
 Rocks branch-track `v0.2`, so pushing the fix to `v0.2` already
 serves it under `0.2-1`; a new rock rev `0.2-2` (+ `dev-2`,
@@ -37,19 +81,33 @@ replaces `dev-1`) is only to re-publish. Mirror atmos `0.7-2`.
 3. [x] Test local (LUA_PATH): hello, across, click-drag-cancel
 4. [~] SKIP rock bump (identical content; branch-tracked) -- DROPPED
 5. [~] SKIP global luarocks make / upload -- DROPPED
-6. [ ] Commit, push `v0.2`, ff `main`, sync
+6. [x] Commit, push `v0.2`, ff `main`, sync (39ee15e; both @ a31c8d1)
 7. [~] SKIP `luarocks upload` (no new rev) -- DROPPED
-8. [ ] Re-migrate + test downstream apps (see below)
+8. [~] Downstream apps MIGRATED + TESTED (all 3 repos run).
+       - sdl-birds: COMMITTED + PUSHED (done).
+       - sdl-rocks / sdl-pingus: UNCOMMITTED (local only) --
+         see "NEXT STEPS" at top for commit/push handoff.
 
 ## Downstream apps (no own plan -- handle here)
 
 Apps hard-break on 0.7-2 too. Same mechanical renames
 (`every`->`loop_on`, `task()`->`xtask()`, `spawn(fn)`->`do_spawn`);
 git-only, push branch (no rock). Test against the new env rock:
-- [ ] sdl-birds  (branch `v0.5`):   `birds-11.lua`
-- [ ] sdl-rocks  (branch `v0.5`/master): `main.lua`, `ts.lua`,
-      `battle.lua`
-- [ ] sdl-pingus (branch `v0.5`):   `main.lua` (`level/pingu/menu`)
+All rules applied (loop_on incl spaced, xtask, do_spawn,
+DEFINITION-wrap protos in task()). All files pass `luac -p`.
+EDITED, not committed/tested:
+- [x] sdl-birds  (on `main`): ALL `birds-01..11.lua`
+      -- 51 loop_on, 16 xtask; `local Bird = task(...)` x11.
+- [x] sdl-rocks  (on `master`): `ts/main/battle.lua`
+      -- 15 loop_on, 7 xtask, 5 do_spawn; protos wrapped:
+      Move_T/Meteor/Shot/Ship (ts), Battle (battle).
+- [x] sdl-pingus (on `main`): `pingu/menu/level/main.lua`
+      -- 6 loop_on, 2 do_spawn; protos wrapped: Sprite/Pingu/
+      Faller/Walker (pingu), Menu.Button/Menu.Main (menu),
+      Level (level).
+
+TESTED OK (2026-06-18, all 3 repos run). PENDING: commit + push
+each repo (your git; e.g. birds-11, rocks/main, pingus/main run).
 
 --------------------------------------------------------------
 

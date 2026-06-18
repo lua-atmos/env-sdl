@@ -33,6 +33,17 @@ replaces `dev-1`) is only to re-publish. Mirror atmos `0.7-2`.
 5. [ ] `luarocks make` + test global
 6. [ ] Commit, push `v0.2`, ff `main`, sync
 7. [ ] `luarocks upload atmos-env-sdl-0.2-2.rockspec`
+8. [ ] Re-migrate + test downstream apps (see below)
+
+## Downstream apps (no own plan -- handle here)
+
+Apps hard-break on 0.7-2 too. Same mechanical renames
+(`every`->`loop_on`, `task()`->`xtask()`, `spawn(fn)`->`do_spawn`);
+git-only, push branch (no rock). Test against the new env rock:
+- [ ] sdl-birds  (branch `v0.5`):   `birds-11.lua`
+- [ ] sdl-rocks  (branch `v0.5`/master): `main.lua`, `ts.lua`,
+      `battle.lua`
+- [ ] sdl-pingus (branch `v0.5`):   `main.lua` (`level/pingu/menu`)
 
 --------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 # Plan: Re-release env-sdl v0.2 (atmos 0.7-2)
 
-## RESUME HERE (state @ 2026-06-18) -- NEXT = §1 migrate
+## RESUME HERE (state @ 2026-06-18) -- NEXT = step 3 test local
 
 PRIOR CUT (frozen, see bottom): env-sdl v0.2 / rock `0.2-1`
 was released for atmos 0.7-1. That work stands. Since then
@@ -26,8 +26,8 @@ replaces `dev-1`) is only to re-publish. Mirror atmos `0.7-2`.
 
 ## Steps (this re-cut)
 
-1. [ ] Migrate the 4 sites above
-2. [ ] Grep clean: no `every(` / `task()` / bare `spawn(function`
+1. [x] Migrate the 4 sites above
+2. [x] Grep clean: no `every(` / `task()` / bare `spawn(function`
 3. [ ] Test local (LUA_PATH): hello, across, click-drag-cancel
 4. [ ] `0.2-2.rockspec` (copy 0.2-1, branch v0.2) + `dev-2`
 5. [ ] `luarocks make` + test global

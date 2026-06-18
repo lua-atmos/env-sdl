@@ -18,8 +18,8 @@ loop(function ()
 
     local text = " "
     local rect = {x=256/2-20,y=256/2-20, w=40,h=40}
-    spawn(function ()
-        every('sdl.draw', function ()
+    do_spawn(function ()
+        loop_on('sdl.draw', function ()
             REN:setDrawColor(0x000000)
             REN:clear()
             REN:setDrawColor(0xFFFFFF)
@@ -46,7 +46,7 @@ loop(function ()
                 await { tag='sdl', type=SDL.event.MouseButtonUp }
                 text = "!!! DRAGGED !!!"
             end, function ()
-                every({ tag='sdl', type=SDL.event.MouseMotion }, function (e)
+                loop_on({ tag='sdl', type=SDL.event.MouseMotion }, function (e)
                     rect.x = orig.x + (e.x - click.x)
                     rect.y = orig.y + (e.y - click.y)
                 end)

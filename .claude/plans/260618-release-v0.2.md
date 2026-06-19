@@ -8,24 +8,19 @@ DONE & PUSHED (nothing to carry):
 - sdl-birds: migrated + tested + COMMITTED + PUSHED.
   `v0.5`==`main`==origin @ edc8203 ("v0.5 : task, xtask, loop_on").
 
->>> CRITICAL -- UNCOMMITTED, LOCAL TO THIS MACHINE ONLY <<<
-sdl-rocks & sdl-pingus are migrated + TESTED but their edits are
-WORKING-TREE ONLY (not committed). They will NOT be on another
-machine. Options: (a) commit+push HERE before switching, or
-(b) redo the migration there (rules below + RULE 9 + pitfalls).
+ALL DOWNSTREAM APPS DONE (verified 2026-06-18):
+sdl-rocks & sdl-pingus are now COMMITTED + PUSHED (no longer
+working-tree only). All 3 app repos released at `v0.5`,
+`main`/`master`==`v0.5`==origin.
 
-NEXT STEPS (explicit):
-1. [ ] sdl-rocks (on branch `v0.5`; modified: battle/main/ts.lua):
-       commit -> push v0.5 -> ff `master` -> push master.
-       Base origin @ 719f2e1. Use msg like sdl-birds:
-       "v0.5 : task, xtask, loop_on".
-2. [ ] sdl-pingus (on branch `v0.5`; modified: level/menu/pingu.lua):
-       commit -> push v0.5 -> ff `main` -> push main.
-       Base origin @ 1352516. Same commit msg.
-3. [ ] (optional) spot-rerun an example per repo after checkout
-       on the other machine to confirm (luac -p + run).
-4. [ ] Back in atmos plan (06-08-release-v0.7.md): mark sdl-rocks/
-       sdl-pingus DONE under §4 apps; then continue atmos §2 docs.
+DONE STEPS:
+1. [x] sdl-rocks: committed + pushed. `master`==`v0.5`==origin
+       @ 942290d ("v0.5 : task, loop_on, do_spawn"). Clean tree.
+2. [x] sdl-pingus: committed + pushed. `main`==`v0.5`==origin
+       @ 175928b ("v0.5 : task, loop_on, do_spawn"). Clean tree.
+3. [x] Both repos verified (working tree clean, branches synced).
+4. [ ] Back in atmos plan (06-08-release-v0.7.md): sdl-rocks/
+       sdl-pingus marked DONE under §4 apps; continue atmos §2 docs.
 
 If redoing on another machine, apply per file:
 `every (`/`every(` -> `loop_on`; `task()` -> `xtask()`;
@@ -83,10 +78,10 @@ replaces `dev-1`) is only to re-publish. Mirror atmos `0.7-2`.
 5. [~] SKIP global luarocks make / upload -- DROPPED
 6. [x] Commit, push `v0.2`, ff `main`, sync (39ee15e; both @ a31c8d1)
 7. [~] SKIP `luarocks upload` (no new rev) -- DROPPED
-8. [~] Downstream apps MIGRATED + TESTED (all 3 repos run).
-       - sdl-birds: COMMITTED + PUSHED (done).
-       - sdl-rocks / sdl-pingus: UNCOMMITTED (local only) --
-         see "NEXT STEPS" at top for commit/push handoff.
+8. [x] Downstream apps MIGRATED + TESTED + COMMITTED + PUSHED.
+       - sdl-birds:  v0.5==main==origin @ edc8203.
+       - sdl-rocks:  v0.5==master==origin @ 942290d.
+       - sdl-pingus: v0.5==main==origin @ 175928b.
 
 ## Downstream apps (no own plan -- handle here)
 

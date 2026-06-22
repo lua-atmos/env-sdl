@@ -35,12 +35,12 @@ loop(function ()
         }
         local orig = x.copy(rect)
         text = "... clicking ..."
-        par_or(function ()
+        par_any(function ()
             await { tag='sdl', type=SDL.event.KeyDown, name='Escape' }
             rect = orig
             text = "!!! CANCELLED !!!"
         end, function ()
-            par_or(function ()
+            par_any(function ()
                 await { tag='sdl', type=SDL.event.MouseMotion }
                 text = "... dragging ..."
                 await { tag='sdl', type=SDL.event.MouseButtonUp }

@@ -1,8 +1,8 @@
 package = "atmos-env-sdl"
-version = "0.2-1"
+version = "0.3-1"
 source = {
    url = "git+https://github.com/lua-atmos/env-sdl",
-   branch = "v0.2",
+   branch = "v0.3",
 }
 description = {
    summary = "SDL environment for Atmos",
@@ -11,7 +11,7 @@ description = {
 }
 dependencies = {
    "lua >= 5.4",
-   "atmos ~> 0.7",
+   "atmos ~> 0.8",
    "lua-sdl2",
 }
 build = {

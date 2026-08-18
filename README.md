@@ -7,11 +7,12 @@ An [Atmos][atmos] environment for [SDL][sdl] based on [lua-sdl2][lua-sdl2].
 [lua-sdl2]: https://github.com/Tangent128/luasdl2/
 
 [
+    [`v0.3`](https://github.com/lua-atmos/env-sdl/tree/v0.3)  |
     [`v0.2`](https://github.com/lua-atmos/env-sdl/tree/v0.2)  |
     [`v0.1`](https://github.com/lua-atmos/env-sdl/tree/v0.1)
 ]
 
-Stable branch is [`v0.2`](https://github.com/lua-atmos/env-sdl/tree/v0.2).
+Stable branch is [`v0.3`](https://github.com/lua-atmos/env-sdl/tree/v0.3).
 
 # Install
 
@@ -19,7 +20,7 @@ Stable branch is [`v0.2`](https://github.com/lua-atmos/env-sdl/tree/v0.2).
 sudo luarocks --lua-version=5.4 install atmos-env-sdl
 ```
 
-Dependencies: `lua-sdl2`, `atmos v0.7`
+Dependencies: `lua-sdl2`, `atmos v0.8`
 
 # Run
 
